@@ -35,9 +35,10 @@
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
-    (println real-uri arg-map)
+    ;;(println apply (str req))
+    ;;(println res)
     (ac/await res)
-    (ac/string res)))
+    (json/read-json (ac/string res))))
 
 (defmacro def-wordnik-method
   "Macro to create the Wordnik API calls"
