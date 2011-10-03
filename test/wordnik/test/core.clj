@@ -1,11 +1,12 @@
 (ns wordnik.test.core
   (:use [wordnik.core]
-        [wordnik.api.word]
+        [wordnik.api word account]
         [clojure.test]))
 
-(def api-key "3348c2e6bd192e189d004095a5500d2fb705419146533e2dc")
+(def *wordnik-api-key* "<your api key here>")
 (deftest bar
-  (word-examples :word "funny")
-  (word :word "chubby")
-  (word-definitions :word "super")
+  (word-examples :word "funny" :api_key *wordnik-api-key*)
+  (println (word :word "funny" :api_key *wordnik-api-key*))
+  (println (word-definitions :word "funny" :api_key *wordnik-api-key*))
+  (println (account-token-status :api_key *wordnik-api-key*))
   (is true true))

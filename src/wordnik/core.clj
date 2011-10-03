@@ -1,14 +1,16 @@
 (ns wordnik.core
-  (:require
+  (:use
    [clojure.data.json :as json]
+   [http.async.client.util :as requ]
+   [http.async.client.request :as req]
    [http.async.client :as ac]
-   [http.async.client.request :as acr])
-  )
+  ))
 
-(defn get-client []
-  (ac/create-client))
+(def memo-create-client (memoize ac/create-client))
 
-(def get-client-memo (memoize get-client))
+(defn default-client []
+  (memo-create-client :user-agent "clj-wordnik/0.1.0"))
+
 (def ^:dynamic *api-url* "api.wordnik.com")
 (def ^:dynamic *api-version* "v4")
 (def ^:dynamic *protocol* "http")
@@ -27,11 +29,15 @@
 
 (defn make-request [request-method uri arg-map]
   (let [real-uri (subs-uri uri arg-map)
-        req (acr/prepare-request get-client-memo
-                                 :get "http://google.com"
-                                 :headers {:my-header "value"})]
-    ;;req (acr/prepare-request get-client-memo :action real-uri)]
-    (println real-uri)))
+        req (req/prepare-request :get real-uri
+                                 :query {:api_key (:api_key arg-map)})
+
+        client (default-client) 
+        res (apply req/execute-request client req
+                   (apply concat (merge *default-callbacks*)))]
+    (println real-uri arg-map)
+    (ac/await res)
+    (ac/string res)))
 
 (defmacro def-wordnik-method
   "Macro to create the Wordnik API calls"
@@ -45,16 +51,3 @@
                        req-uri#
                        arg-map#)))))
 
-;; account
-;; word
-;; word-list
-;; word-lists
-;; words
-;;(def-wordnik-method word-oof :get "word.json")
-
-(comment (defn word [w key]
-  (with-open [client (get-client-memo)]
-    (let [res (ac/GET client (str "http://api.wordnik.com/v4/word.json/" w)
-                      :query {:api_key key})]
-      (ac/await res)
-      (ac/string res)))))
