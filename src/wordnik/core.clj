@@ -11,9 +11,18 @@
 (defn default-client []
   (memo-create-client :user-agent "clj-wordnik/0.1.0"))
 
+(def ^:dynamic *api-key* nil)
+
 (def ^:dynamic *api-url* "api.wordnik.com")
 (def ^:dynamic *api-version* "v4")
 (def ^:dynamic *protocol* "http")
+
+(defmacro with-api-key
+  "Use the Wordnik API Key for the contained methods."
+  [key & body]
+  `(binding [*api-key* ~key]
+     (do 
+       ~@body)))
 
 ;; from twitter-api
 (defn subs-uri
@@ -27,16 +36,17 @@
           (if-not value (throw (Exception. (format "%s needs :%s param to be supplied" uri kw))))
           (recur (rest matches) (.replace result token (str value)))))))
 
-(defn make-request [request-method uri arg-map]
+(defn make-request [request-method uri arg-map auth-map]
+  "Handles creating and sending the HTTP request and returns the response"
   (let [real-uri (subs-uri uri arg-map)
-        req (req/prepare-request :get real-uri
-                                 :query {:api_key (:api_key arg-map)})
-
+        body (:body arg-map) ;; get the post body
+        query-args (dissoc (merge arg-map auth-map) :body) ;; and args w/o body
+        req (req/prepare-request request-method real-uri
+                                 :query query-args
+                                 :body body)
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
-    ;;(println apply (str req))
-    ;;(println res)
     (ac/await res)
     (json/read-json (ac/string res))))
 
@@ -47,8 +57,11 @@
     `(defn ~name [& {:as args#}]
        (let [req-uri# (str *protocol* "://" *api-url* "/" *api-version*
                            "/" ~path)
-             arg-map# (merge ~rest-map args#)]
+             arg-map# (merge ~rest-map args#)
+             auth-map# (when *api-key*
+                         {:api_key *api-key*})]
          (make-request ~request-method
                        req-uri#
-                       arg-map#)))))
+                       arg-map#
+                       auth-map#)))))
 
