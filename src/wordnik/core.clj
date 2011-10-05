@@ -1,15 +1,17 @@
 (ns wordnik.core
   (:use
    [clojure.data.json :as json]
+   [clojure.set :as set :only [rename-keys]]
    [http.async.client.util :as requ]
    [http.async.client.request :as req]
    [http.async.client :as ac]
-  ))
+   [wordnik.util]
+   ))
 
 (def memo-create-client (memoize ac/create-client))
 
 (defn default-client []
-  (memo-create-client :user-agent "clj-wordnik/0.1.0"))
+  (memo-create-client :user-agent "clj-wordnik/0.1.0-SNAPSHOT"))
 
 (def ^:dynamic *api-key* nil)
 
@@ -47,6 +49,10 @@
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
+    (println query-args)
+    (println (set/rename-keys query-args (zipmap (keys query-args) (map #(lisp-to-camel %) (keys query-args)))))
+                   
+    
     (ac/await res)
     (json/read-json (ac/string res))))
 

@@ -1,5 +1,6 @@
 (ns wordnik.util
-  (:use [clojure.contrib.str-utils2 :as s :only [split capitalize map-str]]))
+  (:use [clojure.contrib.str-utils2 :as s :only [split capitalize map-str]])
+  (:use [clojure.contrib.string :as cs :only [replace-char]]))
 
 ;; from stack overflow: http://bit.ly/qnogIl
 (defn seq-contains?
@@ -25,4 +26,5 @@ character lower, i.e. doof-cha-what-now becomse doofChaWhatNow"
     (if (keyword? var-name)
       (keyword (local-join parts))
       (local-join parts))))
+
 
