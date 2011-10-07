@@ -1,6 +1,7 @@
 (ns wordnik.util
   (:use [clojure.contrib.str-utils2 :as s :only [split capitalize map-str]])
-  (:use [clojure.contrib.string :as cs :only [replace-char]]))
+  (:use [clojure.contrib.string :as cs :only [replace-char]])
+  (:use [clojure.set :as set :only [rename-keys]]))
 
 ;; from stack overflow: http://bit.ly/qnogIl
 (defn seq-contains?
@@ -27,4 +28,8 @@ character lower, i.e. doof-cha-what-now becomse doofChaWhatNow"
       (keyword (local-join parts))
       (local-join parts))))
 
-
+(defn transform-args
+  [arg-map]
+  "Given a map of query args, renames using lisp-to-camel and replaces - with _ for api-key and auth-token"
+  (set/rename-keys arg-map (zipmap (keys arg-map) (map #(lisp-to-camel %) (keys arg-map)))))
+  

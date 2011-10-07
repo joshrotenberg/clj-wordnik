@@ -1,7 +1,7 @@
 (ns wordnik.test.core
   (:use [wordnik.core]
         [wordnik.util]
-        [wordnik.api word account]
+        [wordnik.api word account wordlists words]
         [clojure.test])
   (:import (java.util.Properties)))
 
@@ -35,7 +35,7 @@
                       :word)))
     
     (is (= true (let [my-words (-> (word-related :word "big"
-                                                 :partOfSpeech "adjective"
+                                                 :part-of-speech "adjective"
                                                  :type "antonym")
                                    first
                                    :words)]
@@ -43,8 +43,8 @@
     (is (= true (contains? (first (word-pronunciations :word "route")) :id)))
     (is (= 11 (count (word-hyphenation :word "antidisestablishmentarianism"))))
     (is (= 0 (-> (word-frequency :word "software"
-                                 :startYear 1806
-                                 :endYear 1806)
+                                 :start-year 1806
+                                 :end-year 1806)
                  :frequency
                  first
                  :count)))
@@ -53,12 +53,35 @@
     (is (= true  (contains? (first (word-audio :word "scout" :limit 1)) :fileUrl)))
     ))
 
+(def ^:dynamic *test-token* nil)
 
 (deftest account-tests
+  ;; test calls that don't require an auth token
   (with-api-key *wordnik-api-key*
-    (println (account-authenticate :username *wordnik-username*
-                                   :password *wordnik-password*))
-    (println (account-authenticate-post :username *wordnik-username*
-                                        :body *wordnik-password*))))
+    (is (= true (contains?
+                 (account-authenticate :username *wordnik-username*
+                                       :password *wordnik-password*) :token)))
+    (is (= true (contains?
+                 (account-authenticate-post :username *wordnik-username*
+                                        :body *wordnik-password*) :token)))
+    (is (= true ((account-api-token-status) :valid)))
+    ;; and calls that do
+    (let [*test-token* (:token (account-authenticate-post
+                                :username *wordnik-username*
+                                :body *wordnik-password*))]
+      (with-auth-token *test-token*
+        (is (= *wordnik-username* (:userName  (account-user))))
+        (println (account-wordlists))))))
 
+;;(comment
+;;  (deftest wordlists-tests
+;;    (with-api-key *wordnik-api-key*
+;;      (let [token (:token (account-authenticate :username *wordnik-username*
+;;                                                :password *wordnik-password*))]
+;;        (with-auth-token token
+;;          (println (wordlists :body hexml)))
+;;        ))))
 
+(deftest words-tests
+  (with-api-key *wordnik-api-key*
+    (println (first (words-search :query "bowl")))))

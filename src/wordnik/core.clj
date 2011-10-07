@@ -8,22 +8,31 @@
    [wordnik.util]
    ))
 
-(def memo-create-client (memoize ac/create-client))
 
-(defn default-client []
-  (memo-create-client :user-agent "clj-wordnik/0.1.0-SNAPSHOT"))
-
+(def ^:dynamic *client-version* (System/getProperty "clj-wordnik.version"))
 (def ^:dynamic *api-key* nil)
-
+(def ^:dynamic *auth-token* nil)
 (def ^:dynamic *api-url* "api.wordnik.com")
 (def ^:dynamic *api-version* "v4")
 (def ^:dynamic *protocol* "http")
+
+(def memo-create-client (memoize ac/create-client))
+
+(defn default-client []
+  (memo-create-client :user-agent (str "clj-wordnik/" *client-version*)))
 
 (defmacro with-api-key
   "Use the Wordnik API Key for the contained methods."
   [key & body]
   `(binding [*api-key* ~key]
      (do 
+       ~@body)))
+
+(defmacro with-auth-token
+  "Use the Wordnik Auth Token, obtained by calling authenticate."
+  [token & body]
+  `(binding [*auth-token* ~token]
+     (do  
        ~@body)))
 
 ;; from twitter-api
@@ -49,11 +58,8 @@
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
-    (println query-args)
-    (println (set/rename-keys query-args (zipmap (keys query-args) (map #(lisp-to-camel %) (keys query-args)))))
-                   
-    
     (ac/await res)
+    ;;(println (ac/string res))
     (json/read-json (ac/string res))))
 
 (defmacro def-wordnik-method
@@ -63,9 +69,11 @@
     `(defn ~name [& {:as args#}]
        (let [req-uri# (str *protocol* "://" *api-url* "/" *api-version*
                            "/" ~path)
-             arg-map# (merge ~rest-map args#)
-             auth-map# (when *api-key*
-                         {:api_key *api-key*})]
+             arg-map# (transform-args (merge ~rest-map args#))
+             auth-map# (merge (when *api-key*
+                                {:api_key *api-key*})
+                              (when *auth-token*
+                                {:auth_token *auth-token*}))]
          (make-request ~request-method
                        req-uri#
                        arg-map#
