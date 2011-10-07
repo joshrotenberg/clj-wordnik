@@ -51,15 +51,18 @@
   "Handles creating and sending the HTTP request and returns the response"
   (let [real-uri (subs-uri uri arg-map)
         body (:body arg-map) ;; get the post body
-        query-args (dissoc (merge arg-map auth-map) :body) ;; and args w/o body
+        headers (:headers arg-map)
+        query-args (dissoc (merge arg-map auth-map) :body :headers)
         req (req/prepare-request request-method real-uri
                                  :query query-args
-                                 :body body)
+                                 :body body
+                                 :headers headers)
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
     (ac/await res)
-    ;;(println (ac/string res))
+    ;;(println arg-map)
+    ;;(println (json/read-json (ac/string res)))
     (json/read-json (ac/string res))))
 
 (defmacro def-wordnik-method
