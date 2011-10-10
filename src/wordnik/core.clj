@@ -63,7 +63,8 @@
     (ac/await res)
     ;;(println arg-map)
     ;;(println (json/read-json (ac/string res)))
-    (json/read-json (ac/string res))))
+    ;;(json/read-json (ac/string res))))
+    (ac/string res)))
 
 (defmacro def-wordnik-method
   "Macro to create the Wordnik API calls"
