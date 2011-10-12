@@ -7,6 +7,8 @@
 
 ;; account
 (def ^:dynamic *test-token* nil)
+(println *wordnik-username*)
+
 (deftest account-tests
   ;; test calls that don't require an auth token
   (with-api-key *wordnik-api-key*

@@ -56,15 +56,16 @@
         req (req/prepare-request request-method real-uri
                                  :query query-args
                                  :body body
-                                 :headers headers)
+                                 :headers {"Content-type" "applicaion/json"})
+                                 ;;:headers {});; headers)
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
     (ac/await res)
     ;;(println arg-map)
     ;;(println (json/read-json (ac/string res)))
-    ;;(json/read-json (ac/string res))))
-    (ac/string res)))
+    (json/read-json (ac/string res))))
+    ;;(ac/string res)))
 
 (defmacro def-wordnik-method
   "Macro to create the Wordnik API calls"
