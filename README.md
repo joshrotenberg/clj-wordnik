@@ -49,9 +49,18 @@ in your project.clj
     	 ;; do stuff with discombobulated
 ))
 ```
+## Testing
+
+You'll need to specify your Wordnik API key, username and password in
+the resources/test.properties file to run the tests.
 
 ## Examples
 
+For now just see the [unit tests](https://github.com/joshrotenberg/clj-wordnik/tree/master/test/wordnik/test/api).
+
+## Credits
+
+Lots of inspiration from [Adam Wynne/Stream Science](https://github.com/adamwynne)'s [twitter-api](https://github.com/adamwynne/twitter-api).
 
 ## License
 
