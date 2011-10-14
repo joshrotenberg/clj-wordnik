@@ -3,4 +3,5 @@
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/data.json "0.1.1"]
                  [org.clojars.adamwynne/http.async.client "0.4.1"]]
-  :dev-dependencies [[marginalia "0.6.1"]])
+  :dev-dependencies [[marginalia "0.6.1"]
+                     [re-rand "0.1.0"]])

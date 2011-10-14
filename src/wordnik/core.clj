@@ -60,7 +60,9 @@
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
+    ;;(println body)
     (ac/await res)
+    (println (:msg (:status res)))
     (json/read-json (ac/string res))))
 
 (defmacro def-wordnik-method

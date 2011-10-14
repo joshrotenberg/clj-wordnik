@@ -15,7 +15,6 @@
     (is (= true (contains? (words-search :word "ostracize") :searchResults)))
     (is (= 4 (count (words-random-words :limit 4))))
     (is (= true (contains? (words-random-word) :word)))
-    
     ))
   
   

@@ -13,4 +13,5 @@
   :headers { :content-type "application/json"} )
 (def-wordnik-wordlist-method wordlist-words :get "{:id}/words")
 (def-wordnik-wordlist-method wordlist-delete-words
-  :post "{:wordlist-id}/deleteWords")
+  :post "{:wordlist-id}/deleteWords"
+  :headers { :content-type "application/json"} )
