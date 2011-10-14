@@ -7,4 +7,4 @@
     `(def-wordnik-method ~name ~request-method ~resource ~@rest)))
 
 (def-wordnik-wordlists-method wordlists :post
-  :headers { :content-type "application-json"} )
+  :headers { :content-type "application/json"} )

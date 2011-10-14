@@ -10,7 +10,7 @@
 (def-wordnik-wordlist-method wordlist-delete :delete "{:id}")
 (def-wordnik-wordlist-method wordlist-fetch :get "{:id}")
 (def-wordnik-wordlist-method wordlist-add-words :post "{:id}/words"
-  :headers { :content-type "application-json"} )
+  :headers { :content-type "application/json"} )
 (def-wordnik-wordlist-method wordlist-words :get "{:id}/words")
 (def-wordnik-wordlist-method wordlist-delete-words
   :post "{:wordlist-id}/deleteWords")
