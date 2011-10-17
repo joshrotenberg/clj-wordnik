@@ -14,8 +14,8 @@
                     :description "test-list"
                     :username *wordnik-username*})
 
-(def test-words [ {:stringvalue "chair"}
-                  {:stringvalue "table"} ])
+(def test-words [ {:word "chair"}
+                  {:word "table"} ])
 (println (json/json-str test-words))
 (deftest wordlist-test
   (with-api-key *wordnik-api-key*
@@ -31,7 +31,13 @@
           ;; now fetch it, and test it again
           (is 4 (count (nth (diff result (wordlist-fetch :id wordlist-name)) 2)))
           (println (wordlist-add-words :id wordlist-name
-                                       :body "chair,table"));;(json/json-str test-words)))
+                                       :body (json/json-str test-words)))
+          (println (wordlist-words :id wordlist-name))
+          (println (wordlist-delete-words :id wordlist-name
+                                          :body (json/json-str [{:word "chair"}])))
+          (println (wordlist-words :id wordlist-name))
+          (println (wordlist-delete :id wordlist-name))
+          
           )
 
         ;;(println (wordlist-words :id "my-test-list--2"))

@@ -60,10 +60,11 @@
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
-    ;;(println body)
     (ac/await res)
-    (println (:msg (:status res)))
-    (json/read-json (ac/string res))))
+    (when (= 200 (:code (ac/status res)))
+      (when-let [body (ac/string res)]
+        (json/read-json body)
+        ))))
 
 (defmacro def-wordnik-method
   "Macro to create the Wordnik API calls"
