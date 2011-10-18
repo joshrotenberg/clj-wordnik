@@ -3,7 +3,6 @@
         [wordnik.test.properties]
         [clojure.test]))
 
-(println *wordnik-api-key*)
 (deftest lisp-to-camel-test
   (is (= "fooBarBaz" (lisp-to-camel "foo-bar-baz")))
   (is (= :fooBarBaz (lisp-to-camel :foo-bar-baz))))

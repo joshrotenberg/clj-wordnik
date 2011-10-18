@@ -1,5 +1,5 @@
 (ns wordnik.api.word
-  (:use [wordnik core]))
+  (:use wordnik.core))
 
 (defmacro def-wordnik-word-method
   [name request-method action & rest]

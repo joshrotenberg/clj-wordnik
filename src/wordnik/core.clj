@@ -19,6 +19,7 @@
 (def memo-create-client (memoize ac/create-client))
 
 (defn default-client []
+  "Get an HTTP client object"
   (memo-create-client :user-agent (str "clj-wordnik/" *client-version*)))
 
 (defmacro with-api-key
@@ -60,6 +61,7 @@
         client (default-client) 
         res (apply req/execute-request client req
                    (apply concat (merge *default-callbacks*)))]
+
     (ac/await res)
     (when (= 200 (:code (ac/status res)))
       (when-let [body (ac/string res)]

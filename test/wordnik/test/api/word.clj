@@ -5,9 +5,10 @@
         [wordnik.test.properties]
         [clojure.test]))
 
-
 (deftest word-tests
   (with-api-key  *wordnik-api-key*
+    (is (= (word :word "cats" :use-canonical "false" :api-key "key")
+           (word :word "cats" :use-canonical false :api-key "key")))
     (is (= "funny" (:word (word :word "funny"))))
     (is (= "stupid" (:canonicalForm (word :word "stupid"))))
     (is (= "ugly" (-> (word-examples :word "ugly")

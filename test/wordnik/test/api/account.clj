@@ -7,7 +7,6 @@
 
 ;; account
 (def ^:dynamic *test-token* nil)
-(println *wordnik-username*)
 
 (deftest account-tests
   ;; test calls that don't require an auth token
@@ -17,12 +16,14 @@
                                        :password *wordnik-password*) :token)))
     (is (= true (contains?
                  (account-authenticate-post :username *wordnik-username*
-                                        :body *wordnik-password*) :token)))
+                                            :body *wordnik-password*) :token)))
     (is (= true ((account-api-token-status) :valid)))
     ;; and calls that do
     (let [*test-token* (:token (account-authenticate-post
                                 :username *wordnik-username*
                                 :body *wordnik-password*))]
       (with-auth-token *test-token*
-        (is (= *wordnik-username* (:userName  (account-user))))
-        (println (account-wordlists))))))
+        (is (= *wordnik-username* (:userName  (account-user))))))))
+;; see wordnik.test.api.wordlist for account-wordlists test
+
+

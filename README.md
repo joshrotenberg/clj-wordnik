@@ -62,6 +62,8 @@ For now just see the [unit tests](https://github.com/joshrotenberg/clj-wordnik/t
 
 Lots of inspiration from [Adam Wynne/Stream Science](https://github.com/adamwynne)'s [twitter-api](https://github.com/adamwynne/twitter-api).
 
+[Raynes](https://github.com/Raynes) put a clj-wordnik up just after mine, so we decided to work together to fight for wordless people everywhere. 
+
 ## License
 
 Copyright (C) 2011 Josh Rotenberg

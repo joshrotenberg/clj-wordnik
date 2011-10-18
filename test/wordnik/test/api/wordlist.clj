@@ -16,13 +16,12 @@
 
 (def test-words [ {:word "chair"}
                   {:word "table"} ])
-(println (json/json-str test-words))
+
 (deftest wordlist-test
   (with-api-key *wordnik-api-key*
     (let [token (:token (account-authenticate-post
                          :username *wordnik-username*
                          :body *wordnik-password*))]
-      ;;(println token)
       (with-auth-token token
         (let [result (wordlists :body (json/json-str test-wordlist))
               wordlist-name (:name result)]
@@ -30,19 +29,14 @@
           (is 4 (count (nth (diff test-wordlist result) 2)))
           ;; now fetch it, and test it again
           (is 4 (count (nth (diff result (wordlist-fetch :id wordlist-name)) 2)))
-          (println (wordlist-add-words :id wordlist-name
-                                       :body (json/json-str test-words)))
-          (println (wordlist-words :id wordlist-name))
-          (println (wordlist-delete-words :id wordlist-name
-                                          :body (json/json-str [{:word "chair"}])))
-          (println (wordlist-words :id wordlist-name))
-          (println (wordlist-delete :id wordlist-name))
-          
-          )
 
-        ;;(println (wordlist-words :id "my-test-list--2"))
-        ;;(println (wordlist-add-words :id "my-test-list--2"
-        ;;:username *wordnik-username*
-        ;;:body "[\"buh\", \"doof\"]"))
-        ))))
+          (wordlist-add-words :id wordlist-name
+                              :body (json/json-str test-words))
+          (is (>= (count (account-wordlists)) 1))
+          (is 2 (count (wordlist-words :id wordlist-name)))
+          (wordlist-delete-words :id wordlist-name
+                                 :body (json/json-str [{:word "chair"}]))
+          (is 0 (count (wordlist-words :id wordlist-name)))
+          (wordlist-delete :id wordlist-name)
+          )))))
     
