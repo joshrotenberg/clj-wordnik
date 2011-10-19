@@ -31,12 +31,12 @@ for calls that require it.
 in your project.clj
 
 ```
-[clj-wordnik "0.1.0"]
+[clj-wordnik "0.1.0-SNAPSHOT"]
 ```
 
 ```clojure
 (ns your.app
-    (:use [wordnik.core]
+    (:use wordnik.core
           [wordnik.api word])
 )
 ;; get your api key from somewhere
@@ -57,6 +57,13 @@ the resources/test.properties file to run the tests.
 ## Examples
 
 For now just see the [unit tests](https://github.com/joshrotenberg/clj-wordnik/tree/master/test/wordnik/test/api).
+
+## Status/TODO
+
+# all api calls are supported
+# nuke obvious args like :word in favor of a required first position arg or something
+# write more docs
+# write more tests
 
 ## Credits
 
