@@ -1,8 +1,8 @@
 (defproject clj-wordnik "0.1.0-SNAPSHOT"
-  :description "wordnik api client"
+  :description "Wordnik API Client"
   :dependencies [[org.clojure/clojure "1.3.0"]
-                 [org.clojure/data.json "0.1.1"]
-                 [org.clojars.adamwynne/http.async.client "0.4.1"]]
+                 [org.clojure/data.json "0.1.2"]
+                 [clj-http "0.2.1"]]
   :dev-dependencies [[marginalia "0.6.1"]
                      [re-rand "0.1.0"]])
 

@@ -3,7 +3,8 @@
         [wordnik.util]
         [wordnik.api word]
         [wordnik.test.properties]
-        [clojure.test]))
+        [clojure.test])
+  (:require [clj-http.client :as client]))
 
 (deftest word-tests
   (with-api-key  *wordnik-api-key*

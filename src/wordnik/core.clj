@@ -2,25 +2,15 @@
   (:use
    [clojure.data.json :as json]
    [clojure.set :as set :only [rename-keys]]
-   [http.async.client.util :as requ]
-   [http.async.client.request :as req]
-   [http.async.client :as ac]
-   [wordnik.util]
-   ))
-
+   [wordnik.util])
+  (:require [clj-http.client :as cclient]))
 
 (def ^:dynamic *client-version* (System/getProperty "clj-wordnik.version"))
 (def ^:dynamic *api-key* nil)
 (def ^:dynamic *auth-token* nil)
+
 (def ^:dynamic *api-url* "api.wordnik.com")
 (def ^:dynamic *api-version* "v4")
-(def ^:dynamic *protocol* "http")
-
-(def memo-create-client (memoize ac/create-client))
-
-(defn default-client []
-  "Get an HTTP client object"
-  (memo-create-client :user-agent (str "clj-wordnik/" *client-version*)))
 
 (defmacro with-api-key
   "Use the Wordnik API Key for the contained methods."
@@ -48,40 +38,47 @@
           (if-not value (throw (Exception. (format "%s needs :%s param to be supplied" uri kw))))
           (recur (rest matches) (.replace result token (str value)))))))
 
-(defn make-request [request-method uri arg-map auth-map]
-  "Handles creating and sending the HTTP request and returns the response"
+(defn execute-request [request]
+  "Executes the HTTP request and handles the response"
+  (let [response (cclient/request request)
+        status (:status response)
+        body (:body response)
+        headers (:headers response)]
+    (cond
+     (status-is-client-error status) (throw (Exception. "Client error"))
+     (status-is-server-error status) (throw (Exception. "Server error"))
+     :else
+     (when-not (empty? body)
+       (json/read-json (:body response)))
+     )))
+
+(defn prepare-request [request-method uri arg-map auth-map]
+  "Prepares the HTTP request"
   (let [real-uri (subs-uri uri arg-map)
         body (:body arg-map) ;; get the post body
         headers (:headers arg-map)
         query-args (dissoc (merge arg-map auth-map) :body :headers)
-        req (req/prepare-request request-method real-uri
-                                 :query query-args
-                                 :body body
-                                 :headers headers)
-        client (default-client) 
-        res (apply req/execute-request client req
-                   (apply concat (merge *default-callbacks*)))]
-
-    (ac/await res)
-    (when (= 200 (:code (ac/status res)))
-      (when-let [body (ac/string res)]
-        (json/read-json body)
-        ))))
+        request {:method request-method
+                 :url real-uri
+                 :query-params query-args
+                 :content-type :json
+                 :body body}]
+    (execute-request request)))
 
 (defmacro def-wordnik-method
   "Macro to create the Wordnik API calls"
   [name request-method path & rest]
   (let [rest-map (apply sorted-map rest)]
     `(defn ~name [& {:as args#}]
-       (let [req-uri# (str *protocol* "://" *api-url* "/" *api-version*
+       (let [req-uri# (str "http://" *api-url* "/" *api-version*
                            "/" ~path)
              arg-map# (transform-args (merge ~rest-map args#))
              auth-map# (merge (when *api-key*
                                 {:api_key *api-key*})
                               (when *auth-token*
                                 {:auth_token *auth-token*}))]
-         (make-request ~request-method
-                       req-uri#
-                       arg-map#
-                       auth-map#)))))
+         (prepare-request ~request-method
+                          req-uri#
+                          arg-map#
+                          auth-map#)))))
 

@@ -33,3 +33,10 @@ character lower, i.e. doof-cha-what-now becomse doofChaWhatNow"
   "Given a map of query args, renames using lisp-to-camel and replaces - with _ for api-key and auth-token"
   (set/rename-keys arg-map (zipmap (keys arg-map) (map #(lisp-to-camel %) (keys arg-map)))))
   
+(defn status-is-server-error
+  [status]
+  (seq-contains? (range 500 510) status))
+
+(defn status-is-client-error
+  [status]
+  (seq-contains? (range 400 426) status))
