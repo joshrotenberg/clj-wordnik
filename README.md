@@ -60,10 +60,10 @@ For now just see the [unit tests](https://github.com/joshrotenberg/clj-wordnik/t
 
 ## Status/TODO
 
-# all api calls are supported
-# nuke obvious args like :word in favor of a required first position arg or something
-# write more docs
-# write more tests
+* all api calls are supported
+* nuke obvious args like :word in favor of a required first position arg or something
+* write more docs
+* write more tests
 
 ## Credits
 
