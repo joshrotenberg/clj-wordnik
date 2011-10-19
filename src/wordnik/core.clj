@@ -12,6 +12,8 @@
 (def ^:dynamic *api-url* "api.wordnik.com")
 (def ^:dynamic *api-version* "v4")
 
+(def user-agent (str "clj-wordnik/" *client-version*))
+
 (defmacro with-api-key
   "Use the Wordnik API Key for the contained methods."
   [key & body]
@@ -61,6 +63,7 @@
      :url real-uri
      :query-params query-args
      :content-type :json
+     :headers {"User-Agent" user-agent}
      :body body}))
 
 (defmacro def-wordnik-method
