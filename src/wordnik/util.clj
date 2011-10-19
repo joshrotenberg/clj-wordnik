@@ -35,8 +35,10 @@ character lower, i.e. doof-cha-what-now becomse doofChaWhatNow"
   
 (defn status-is-server-error
   [status]
+  "Return true if the HTTP status denotes a server error"
   (seq-contains? (range 500 510) status))
 
 (defn status-is-client-error
   [status]
+  "Return true if the HTTP status denotes a client error"
   (seq-contains? (range 400 426) status))

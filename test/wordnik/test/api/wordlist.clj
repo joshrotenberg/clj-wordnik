@@ -1,12 +1,12 @@
 (ns wordnik.test.api.wordlist
-  (:use [wordnik.core]
-        [wordnik.util]
+  (:use wordnik.core
+        wordnik.util
         [wordnik.api account wordlist wordlists]
-        [wordnik.test.properties]
-        [re-rand]
+        wordnik.test.properties
+        re-rand
         [clojure.data.json :as json]
-        [clojure.data]
-        [clojure.test]))
+        clojure.data
+        clojure.test))
 
 ;; wordlist
 (def test-wordlist {:name (re-rand #"[A-Za-z0-9]{20}")
