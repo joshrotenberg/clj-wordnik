@@ -49,21 +49,19 @@
      (status-is-server-error status) (throw (Exception. "Server error"))
      :else
      (when-not (empty? body)
-       (json/read-json (:body response)))
-     )))
+       (json/read-json (:body response))))))
 
 (defn prepare-request [request-method uri arg-map auth-map]
   "Prepares the HTTP request"
   (let [real-uri (subs-uri uri arg-map)
         body (:body arg-map) ;; get the post body
         headers (:headers arg-map)
-        query-args (dissoc (merge arg-map auth-map) :body :headers)
-        request {:method request-method
-                 :url real-uri
-                 :query-params query-args
-                 :content-type :json
-                 :body body}]
-    (execute-request request)))
+        query-args (dissoc (merge arg-map auth-map) :body :headers)]
+    {:method request-method
+     :url real-uri
+     :query-params query-args
+     :content-type :json
+     :body body}))
 
 (defmacro def-wordnik-method
   "Macro to create the Wordnik API calls"
@@ -76,9 +74,10 @@
              auth-map# (merge (when *api-key*
                                 {:api_key *api-key*})
                               (when *auth-token*
-                                {:auth_token *auth-token*}))]
-         (prepare-request ~request-method
-                          req-uri#
-                          arg-map#
-                          auth-map#)))))
+                                {:auth_token *auth-token*}))
+             request# (prepare-request ~request-method
+                                       req-uri#
+                                       arg-map#
+                                       auth-map#)]
+         (execute-request request#)))))
 
