@@ -1,9 +1,9 @@
 (ns wordnik.test.api.word
-  (:use [wordnik.core]
-        [wordnik.util]
-        [wordnik.api word]
-        [wordnik.test.properties]
-        [clojure.test])
+  (:use wordnik.core
+        wordnik.util
+        wordnik.api.word
+        wordnik.test.properties
+        clojure.test)
   (:require [clj-http.client :as client]))
 
 (deftest word-tests
@@ -21,7 +21,7 @@
                                                  :type "antonym")
                                    first
                                    :words)]
-                  (seq-contains? my-words "small"))))
+                  (some #{"small"} my-words))))
     (is (= true (contains? (first (word-pronunciations :word "route")) :id)))
     (is (= 11 (count (word-hyphenation :word "antidisestablishmentarianism"))))
     (is (= 0 (-> (word-frequency :word "software"
@@ -30,8 +30,6 @@
                  :frequency
                  first
                  :count)))
-    (is (= true (seq-contains? (map #(:gram1 %) (word-phrases :word "lot"))
-                               "parking")))
-    (is (= true  (contains? (first (word-audio :word "scout" :limit 1)) :fileUrl)))
-    ))
+    (is (= true (some #{"parking"} (map #(:gram1 %) (word-phrases :word "lot")))))
+    (is (= true  (contains? (first (word-audio :word "scout" :limit 1)) :fileUrl)))))
 
