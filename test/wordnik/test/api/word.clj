@@ -12,26 +12,26 @@
            (word :word "cats" :use-canonical false :api-key "key")))
     (is (= "funny" (:word (word :word "funny"))))
     (is (= "stupid" (:canonicalForm (word :word "stupid"))))
-    (is (= "ugly" (-> (word-examples :word "ugly")
+    (is (= "ugly" (-> (examples :word "ugly")
                       :examples
                       first
                       :word)))
-    (is (= true (let [my-words (-> (word-related :word "big"
-                                                 :part-of-speech "adjective"
-                                                 :type "antonym")
+    (is (= true (let [my-words (-> (related :word "big"
+                                            :part-of-speech "adjective"
+                                            :type "antonym")
                                    first
                                    :words)]
                   (seq-contains? my-words "small"))))
-    (is (= true (contains? (first (word-pronunciations :word "route")) :id)))
-    (is (= 11 (count (word-hyphenation :word "antidisestablishmentarianism"))))
-    (is (= 0 (-> (word-frequency :word "software"
-                                 :start-year 1806
-                                 :end-year 1806)
+    (is (= true (contains? (first (pronunciations :word "route")) :id)))
+    (is (= 11 (count (hyphenation :word "antidisestablishmentarianism"))))
+    (is (= 0 (-> (frequency :word "software"
+                            :start-year 1806
+                            :end-year 1806)
                  :frequency
                  first
                  :count)))
-    (is (= true (seq-contains? (map #(:gram1 %) (word-phrases :word "lot"))
+    (is (= true (seq-contains? (map #(:gram1 %) (phrases :word "lot"))
                                "parking")))
-    (is (= true  (contains? (first (word-audio :word "scout" :limit 1)) :fileUrl)))
+    (is (= true  (contains? (first (audio :word "scout" :limit 1)) :fileUrl)))
     ))
 

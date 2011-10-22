@@ -11,10 +11,10 @@
 ;; words-random-word
 (deftest words-tests
   (with-api-key *wordnik-api-key*
-    (is (= true (contains? (words-wotd) :word)))
-    (is (= true (contains? (words-search :word "ostracize") :searchResults)))
-    (is (= 4 (count (words-random-words :limit 4))))
-    (is (= true (contains? (words-random-word) :word)))
+    (is (= true (contains? (wotd) :word)))
+    (is (= true (contains? (search :word "ostracize") :searchResults)))
+    (is (= 4 (count (random-words :limit 4))))
+    (is (= true (contains? (random-word) :word)))
     ))
   
   

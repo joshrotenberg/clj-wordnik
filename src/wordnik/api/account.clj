@@ -6,10 +6,10 @@
   (let [resource (str "account.json/" action)]
     `(def-wordnik-method ~name ~request-method ~resource ~@rest)))
 
-(def-wordnik-account-method account-authenticate
+(def-wordnik-account-method authenticate
   :get "authenticate/{:username}")
-(def-wordnik-account-method account-authenticate-post
+(def-wordnik-account-method authenticate-post
   :post "authenticate/{:username}")
-(def-wordnik-account-method account-wordlists :get "wordLists")
-(def-wordnik-account-method account-api-token-status :get "apiTokenStatus")
-(def-wordnik-account-method account-user :get "user")
+(def-wordnik-account-method wordlists :get "wordLists")
+(def-wordnik-account-method api-token-status :get "apiTokenStatus")
+(def-wordnik-account-method user :get "user")
