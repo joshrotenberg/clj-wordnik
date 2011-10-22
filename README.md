@@ -13,7 +13,7 @@ a few exceptions. Most calls are simply the call name and then the
 params as keywords:
 
 ```clojure
-(word-examples :word "vinculum" :include-duplicates false :api-key "key") 
+(examples :word "vinculum" :include-duplicates false :api-key "key") 
 ```
 
 All call parameters can use the more lispy '-'
