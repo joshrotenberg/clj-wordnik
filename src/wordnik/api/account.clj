@@ -7,9 +7,9 @@
     `(def-wordnik-method ~name ~request-method ~resource ~@rest)))
 
 (def-wordnik-account-method authenticate
-  :get "authenticate/{:username}")
+  :get "authenticate/%s")
 (def-wordnik-account-method authenticate-post
-  :post "authenticate/{:username}")
+  :post "authenticate/%s")
 (def-wordnik-account-method wordlists :get "wordLists")
 (def-wordnik-account-method api-token-status :get "apiTokenStatus")
 (def-wordnik-account-method user :get "user")

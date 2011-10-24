@@ -12,15 +12,14 @@
   ;; test calls that don't require an auth token
   (with-api-key *wordnik-api-key*
     (is (= true (contains?
-                 (authenticate :username *wordnik-username*
+                 (authenticate *wordnik-username*
                                :password *wordnik-password*) :token)))
     (is (= true (contains?
-                 (authenticate-post :username *wordnik-username*
+                 (authenticate-post *wordnik-username*
                                     :body *wordnik-password*) :token)))
     (is (= true ((api-token-status) :valid)))
     ;; and calls that do
-    (let [*test-token* (:token (authenticate-post
-                                :username *wordnik-username*
+    (let [*test-token* (:token (authenticate-post *wordnik-username*
                                 :body *wordnik-password*))]
       (with-auth-token *test-token*
         (is (= *wordnik-username* (:userName  (user))))))))

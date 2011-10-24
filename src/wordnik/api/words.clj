@@ -7,6 +7,6 @@
     `(def-wordnik-method ~name ~request-method ~resource ~@rest)))
 
 (def-wordnik-words-method wotd :get "wordOfTheDay")
-(def-wordnik-words-method search :get "search/{:word}")
+(def-wordnik-words-method search :get "search/%s")
 (def-wordnik-words-method random-words :get "randomWords")
 (def-wordnik-words-method random-word :get "randomWord")

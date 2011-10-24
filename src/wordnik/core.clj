@@ -28,18 +28,6 @@
      (do  
        ~@body)))
 
-;; from twitter-api
-(defn subs-uri
-  "substitutes parameters for tokens in the uri"
-  [uri params]
-  (loop [matches (re-seq #"\{\:(\w+)\}" uri)
-         ^String result uri]
-    (if (empty? matches) result
-        (let [[token kw] (first matches)
-              value (get params (keyword kw))]
-          (if-not value (throw (Exception. (format "%s needs :%s param to be supplied" uri kw))))
-          (recur (rest matches) (.replace result token (str value)))))))
-
 (defn execute-request [request]
   "Executes the HTTP request and handles the response"
   (let [response (cclient/request request)
@@ -53,12 +41,11 @@
      (when-not (empty? body)
        (json/read-json (:body response))))))
 
-(defn prepare-request [request-method uri arg-map auth-map]
+(defn prepare-request [request-method uri first-arg arg-map auth-map]
   "Prepares the HTTP request"
-  (let [real-uri (subs-uri uri arg-map)
+  (let [real-uri (format uri first-arg)
         body (:body arg-map) ;; get the post body
-        headers (:headers arg-map)
-        query-args (dissoc (merge arg-map auth-map) :body :headers)]
+        query-args (dissoc (merge arg-map auth-map) :body)]
     {:method request-method
      :url real-uri
      :query-params query-args
@@ -69,18 +56,20 @@
 (defmacro def-wordnik-method
   "Macro to create the Wordnik API calls"
   [name request-method path & rest]
-  (let [rest-map (apply sorted-map rest)]
-    `(defn ~name [& {:as args#}]
-       (let [req-uri# (str "http://" *api-url* "/" *api-version*
-                           "/" ~path)
-             arg-map# (transform-args (merge ~rest-map args#))
-             auth-map# (merge (when *api-key*
-                                {:api_key *api-key*})
-                              (when *auth-token*
-                                {:auth_token *auth-token*}))
-             request# (prepare-request ~request-method
-                                       req-uri#
-                                       arg-map#
-                                       auth-map#)]
-         (execute-request request#)))))
+  `(defn ~name [& args#];;& {:as args#}]
+     (let [req-uri# (str "http://" *api-url* "/" *api-version*
+                         "/" ~path)
+           split-args# (split-with (complement keyword?) args#)
+           first-arg# (ffirst split-args#)
+           arg-map# (transform-args (apply hash-map (second split-args#)))
+           auth-map# (merge (when *api-key*
+                              {:api_key *api-key*})
+                            (when *auth-token*
+                              {:auth_token *auth-token*}))
+           request# (prepare-request ~request-method
+                                     req-uri#
+                                     first-arg#
+                                     arg-map#
+                                     auth-map#)]
+         (execute-request request#))))
 

@@ -13,7 +13,7 @@ a few exceptions. Most calls are simply the call name and then the
 params as keywords:
 
 ```clojure
-(examples :word "vinculum" :include-duplicates false :api-key "key") 
+(examples "vinculum" :include-duplicates false :api-key "<your api key>") 
 ```
 
 All call parameters can use the more lispy '-'
@@ -45,7 +45,7 @@ in your project.clj
 
 ;; look up the word discombobulated
 (with-api-key my-api-key
-    (let [discombobulated (word :word "discombobulated")]
+    (let [discombobulated (word "discombobulated")]
     	 ;; do stuff with discombobulated
 ))
 ```
