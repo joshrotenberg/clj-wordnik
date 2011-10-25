@@ -14,6 +14,7 @@
 
 (def user-agent (str "clj-wordnik/" *client-version*))
 
+;; Run the enclosed call(s) with the API key
 (defmacro with-api-key
   "Use the Wordnik API Key for the contained methods."
   [key & body]
@@ -21,6 +22,8 @@
      (do 
        ~@body)))
 
+;; Run the enclosed call(s) with the auth token (obtained from calling
+;; authenticate.
 (defmacro with-auth-token
   "Use the Wordnik Auth Token, obtained by calling authenticate."
   [token & body]

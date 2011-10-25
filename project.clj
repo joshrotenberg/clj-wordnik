@@ -1,4 +1,4 @@
-(defproject clj-wordnik "0.1.0-SNAPSHOT"
+(defproject clj-wordnik "0.1.0-alpha1"
   :description "Wordnik API Client"
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [org.clojure/data.json "0.1.2"]

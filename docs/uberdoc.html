@@ -2526,72 +2526,103 @@ $(document).ready(function() {
     ul.css('margin-top', '0px')
 
 })
-</script><title>clj-wordnik -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">clj-wordnik</h1><h2 class="project-version">0.1.0-SNAPSHOT</h2><br /><p>Wordnik API Client</p>
+</script><title>clj-wordnik -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">clj-wordnik</h1><h2 class="project-version">0.1.0-alpha1</h2><br /><p>Wordnik API Client</p>
 </div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.3.0</td></tr><tr><td class="dep-name">org.clojure/data.json</td><td class="dotted"><hr /></td><td class="dep-version">0.1.2</td></tr><tr><td class="dep-name">clj-http</td><td class="dotted"><hr /></td><td class="dep-version">0.2.2</td></tr></table></div><div class="dependencies"><h3>dev dependencies</h3><table><tr><td class="dep-name">marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.6.1</td></tr><tr><td class="dep-name">re-rand</td><td class="dotted"><hr /></td><td class="dep-version">0.1.0</td></tr><tr><td class="dep-name">lein-clojars</td><td class="dotted"><hr /></td><td class="dep-version">0.6.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#wordnik.api.account">wordnik.api.account</a></li><li><a href="#wordnik.api.word">wordnik.api.word</a></li><li><a href="#wordnik.api.wordlist">wordnik.api.wordlist</a></li><li><a href="#wordnik.api.wordlists">wordnik.api.wordlists</a></li><li><a href="#wordnik.api.words">wordnik.api.words</a></li><li><a href="#wordnik.core">wordnik.core</a></li><li><a href="#wordnik.util">wordnik.util</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.account" name="wordnik.api.account"><h1 class="project-name">wordnik.api.account</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns wordnik.api.account
-  (:use wordnik.core))</pre></tr><tr><td class="docs">
+  (:use wordnik.core))</pre></tr><tr><td class="docs"><p>Functions for accessing the "account" calls.
+The first argument to both authenticate calls should be
+the username as a string.</p>
+
+<p>(authenticate "picklelover" :password "secret123")</p>
+
+<p>(authenticate-post "matilda" :body "secretabc")</p>
+
+<p>See http://developer.wordnik.com/docs#!/account for more information
+and supported arguments. </p>
 </td><td class="codes" /><pre class="brush: clojure">(defmacro def-wordnik-account-method
   [name request-method action &amp; rest]
   (let [resource (str &quot;account.json/&quot; action)]
-    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs">
+    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs"><p>authenticate - Authenticate a user</p>
 </td><td class="codes" /><pre class="brush: clojure">(def-wordnik-account-method authenticate
-  :get &quot;authenticate/{:username}&quot;)
-(def-wordnik-account-method authenticate-post
-  :post &quot;authenticate/{:username}&quot;)
-(def-wordnik-account-method wordlists :get &quot;wordLists&quot;)
-(def-wordnik-account-method api-token-status :get &quot;apiTokenStatus&quot;)
-(def-wordnik-account-method user :get &quot;user&quot;)</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.word" name="wordnik.api.word"><h1 class="project-name">wordnik.api.word</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+  :get &quot;authenticate/%s&quot;)</pre></tr><tr><td class="docs"><p>authenticate - Authenticate a user, send the password as the post body</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-account-method authenticate-post
+  :post &quot;authenticate/%s&quot;)</pre></tr><tr><td class="docs"><p>wordlists - Fetches WordList objects for the logged-in user</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-account-method wordlists :get &quot;wordLists&quot;)</pre></tr><tr><td class="docs"><p>api-token-status - Returns usage statistics for the API account</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-account-method api-token-status :get &quot;apiTokenStatus&quot;)</pre></tr><tr><td class="docs"><p>user - Returns the logged-in user</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-account-method user :get &quot;user&quot;)</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.word" name="wordnik.api.word"><h1 class="project-name">wordnik.api.word</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns wordnik.api.word
-  (:use wordnik.core))</pre></tr><tr><td class="docs">
+  (:use wordnik.core))</pre></tr><tr><td class="docs"><p>Functions for accessing the "word" calls.
+The first argument to these calls should be the word as a string, followed by
+keyword param names and their arguments:</p>
+
+<p>(word "epidermolysis" :use-canonical true)</p>
+
+<p>(definitions "heterotypic")</p>
+
+<p>See http://developer.wordnik.com/docs#!/word for more information
+and supported arguments. </p>
 </td><td class="codes" /><pre class="brush: clojure">(defmacro def-wordnik-word-method
   [name request-method action &amp; rest]
   (let [resource (str &quot;word.json/&quot; action)]
-    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs">
-</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method word :get &quot;{:word}&quot;)
-(def-wordnik-word-method examples :get &quot;{:word}/examples&quot;)
-(def-wordnik-word-method definitions :get &quot;{:word}/definitions&quot;)
-(def-wordnik-word-method top-examples :get &quot;{:word}/topExamples&quot;)
-(def-wordnik-word-method punctuation-factor
-  :get &quot;{:word}/punctuationFactor&quot;)
-(def-wordnik-word-method related :get &quot;{:word}/related&quot;)
-(def-wordnik-word-method pronunciations :get &quot;{:word}/pronunciations&quot;)
-(def-wordnik-word-method hyphenation :get &quot;{:word}/hyphenation&quot;)
-(def-wordnik-word-method frequency :get &quot;{:word}/frequency&quot;)
-(def-wordnik-word-method phrases :get &quot;{:word}/phrases&quot;)
-(def-wordnik-word-method audio :get &quot;{:word}/audio&quot;)</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.wordlist" name="wordnik.api.wordlist"><h1 class="project-name">wordnik.api.wordlist</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs"><p>examples - Returns examples for a word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method examples :get &quot;%s/examples&quot;)</pre></tr><tr><td class="docs"><p>word - Given a word as a string, returns the WordObject that represents it</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method word :get &quot;%s&quot;)</pre></tr><tr><td class="docs"><p>definitions - Return definitions for a word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method definitions :get &quot;%s/definitions&quot;)</pre></tr><tr><td class="docs"><p>top-examples - Returns a top example for a word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method top-example :get &quot;%s/topExample&quot;)</pre></tr><tr><td class="docs"><p>related - Returns related words (thesaurus data) for a word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method related :get &quot;%s/related&quot;)</pre></tr><tr><td class="docs"><p>pronunciations - Returns text pronunciations for a given word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method pronunciations :get &quot;%s/pronunciations&quot;)</pre></tr><tr><td class="docs"><p>hyphenation - Returns syllable information for a word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method hyphenation :get &quot;%s/hyphenation&quot;)</pre></tr><tr><td class="docs"><p>frequency - Returns word usage over time</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method frequency :get &quot;%s/frequency&quot;)</pre></tr><tr><td class="docs"><p>phrases - Fetches bi-gram phrases for a word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method phrases :get &quot;%s/phrases&quot;)</pre></tr><tr><td class="docs"><p>audio - Fetches audio metadata for a word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-word-method audio :get &quot;%s/audio&quot;)</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.wordlist" name="wordnik.api.wordlist"><h1 class="project-name">wordnik.api.wordlist</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns wordnik.api.wordlist
-  (:use wordnik.core))</pre></tr><tr><td class="docs">
+  (:use wordnik.core))</pre></tr><tr><td class="docs"><p>Functions for accessing the "wordList" calls.
+The first argument is always the wordlist ID.</p>
+
+<p>(fetch "mywordlist")</p>
+
+<p>(delete "mysuckywordlist")</p>
+
+<p>(words "anotherwordlist" :limit 4 :sort-order "desc")</p>
+
+<p>See http://developer.wordnik.com/docs#!/wordlist for more information
+and supported arguments. </p>
 </td><td class="codes" /><pre class="brush: clojure">(defmacro def-wordnik-wordlist-method
   [name request-method action &amp; rest]
   (let [resource (str &quot;wordList.json/&quot; action)]
-    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs">
-</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlist-method update :put &quot;{:id}&quot;)
-(def-wordnik-wordlist-method delete :delete &quot;{:id}&quot;)
-(def-wordnik-wordlist-method fetch :get &quot;{:id}&quot;)
-(def-wordnik-wordlist-method add-words :post &quot;{:id}/words&quot;
-  :headers { :content-type &quot;application/json&quot;} )
-(def-wordnik-wordlist-method words :get &quot;{:id}/words&quot;)
-(def-wordnik-wordlist-method delete-words
-  :post &quot;{:id}/deleteWords&quot;
-  :headers { :content-type &quot;application/json&quot;} )</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.wordlists" name="wordnik.api.wordlists"><h1 class="project-name">wordnik.api.wordlists</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs"><p>update - Update an existing wordlist</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlist-method update :put &quot;%s&quot;)</pre></tr><tr><td class="docs"><p>delete - Delete a wordlist</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlist-method delete :delete &quot;%s&quot;)</pre></tr><tr><td class="docs"><p>fetch - Fetch a wordlist</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlist-method fetch :get &quot;%s&quot;)</pre></tr><tr><td class="docs"><p>add-words - Add words to a wordlist</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlist-method add-words :post &quot;%s/words&quot;)</pre></tr><tr><td class="docs"><p>words - Fetch a wordlist's words</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlist-method words :get &quot;%s/words&quot;)</pre></tr><tr><td class="docs"><p>delete-words - Delete words from a wordlist</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlist-method delete-words :post &quot;%s/deleteWords&quot;)</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.wordlists" name="wordnik.api.wordlists"><h1 class="project-name">wordnik.api.wordlists</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns wordnik.api.wordlists
-  (:use wordnik.core))</pre></tr><tr><td class="docs">
+  (:use wordnik.core))</pre></tr><tr><td class="docs"><p>Functions for accessing the "wordlists" call.</p>
+
+<p>See http://developer.wordnik.com/docs#!/wordlists for more information
+and supported arguments. </p>
 </td><td class="codes" /><pre class="brush: clojure">(defmacro def-wordnik-wordlists-method
   [name request-method &amp; rest]
   (let [resource (str &quot;wordLists.json&quot;)]
-    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs">
-</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlists-method wordlists :post
-  :headers { :content-type &quot;application/json&quot;} )</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.words" name="wordnik.api.words"><h1 class="project-name">wordnik.api.words</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs"><p>wordlists - Create a wordlist</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-wordlists-method wordlists :post)</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.api.words" name="wordnik.api.words"><h1 class="project-name">wordnik.api.words</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns wordnik.api.words
-  (:use wordnik.core))</pre></tr><tr><td class="docs">
+  (:use wordnik.core))</pre></tr><tr><td class="docs"><p>Functions for accessing the "words" calls.
+The first argument to search should be the word to search for.</p>
+
+<p>(search "dripstones")</p>
+
+<p>See http://developer.wordnik.com/docs#!/words for more information
+and supported arguments. </p>
 </td><td class="codes" /><pre class="brush: clojure">(defmacro def-wordnik-words-method
   [name request-method action &amp; rest]
   (let [resource (str &quot;words.json/&quot; action)]
-    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs">
-</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-words-method wotd :get &quot;wordOfTheDay&quot;)
-(def-wordnik-words-method search :get &quot;search/{:word}&quot;)
-(def-wordnik-words-method random-words :get &quot;randomWords&quot;)
-(def-wordnik-words-method random-word :get &quot;randomWord&quot;)</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.core" name="wordnik.core"><h1 class="project-name">wordnik.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+    `(def-wordnik-method ~name ~request-method ~resource ~@rest)))</pre></tr><tr><td class="docs"><p>search - Searches words</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-words-method search :get &quot;search/%s&quot;)</pre></tr><tr><td class="docs"><p>wotd - Returns a specific WordOfTheDay</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-words-method wotd :get &quot;wordOfTheDay&quot;)</pre></tr><tr><td class="docs"><p>random-words - Returns an array of random words</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-words-method random-words :get &quot;randomWords&quot;)</pre></tr><tr><td class="docs"><p>random-word - Returns a random word</p>
+</td><td class="codes" /><pre class="brush: clojure">(def-wordnik-words-method random-word :get &quot;randomWord&quot;)</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.core" name="wordnik.core"><h1 class="project-name">wordnik.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns wordnik.core
   (:use
    [clojure.data.json :as json]
@@ -2603,29 +2634,20 @@ $(document).ready(function() {
 (def ^:dynamic *auth-token* nil)</pre></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(def ^:dynamic *api-url* &quot;api.wordnik.com&quot;)
 (def ^:dynamic *api-version* &quot;v4&quot;)</pre></tr><tr><td class="docs">
-</td><td class="codes" /><pre class="brush: clojure">(def user-agent (str &quot;clj-wordnik/&quot; *client-version*))</pre></tr><tr><td class="docs">
+</td><td class="codes" /><pre class="brush: clojure">(def user-agent (str &quot;clj-wordnik/&quot; *client-version*))</pre></tr><tr><td class="docs"><p>Run the enclosed call(s) with the API key</p>
 </td><td class="codes" /><pre class="brush: clojure">(defmacro with-api-key
   &quot;Use the Wordnik API Key for the contained methods.&quot;
   [key &amp; body]
   `(binding [*api-key* ~key]
      (do 
-       ~@body)))</pre></tr><tr><td class="docs">
+       ~@body)))</pre></tr><tr><td class="docs"><p>Run the enclosed call(s) with the auth token (obtained from calling
+authenticate.</p>
 </td><td class="codes" /><pre class="brush: clojure">(defmacro with-auth-token
   &quot;Use the Wordnik Auth Token, obtained by calling authenticate.&quot;
   [token &amp; body]
   `(binding [*auth-token* ~token]
      (do  
-       ~@body)))</pre></tr><tr><td class="docs"><p>from twitter-api</p>
-</td><td class="codes" /><pre class="brush: clojure">(defn subs-uri
-  &quot;substitutes parameters for tokens in the uri&quot;
-  [uri params]
-  (loop [matches (re-seq #&quot;\{\:(\w+)\}&quot; uri)
-         ^String result uri]
-    (if (empty? matches) result
-        (let [[token kw] (first matches)
-              value (get params (keyword kw))]
-          (if-not value (throw (Exception. (format &quot;%s needs :%s param to be supplied&quot; uri kw))))
-          (recur (rest matches) (.replace result token (str value)))))))</pre></tr><tr><td class="docs">
+       ~@body)))</pre></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(defn execute-request [request]
   &quot;Executes the HTTP request and handles the response&quot;
   (let [response (cclient/request request)
@@ -2638,12 +2660,11 @@ $(document).ready(function() {
      :else
      (when-not (empty? body)
        (json/read-json (:body response))))))</pre></tr><tr><td class="docs">
-</td><td class="codes" /><pre class="brush: clojure">(defn prepare-request [request-method uri arg-map auth-map]
+</td><td class="codes" /><pre class="brush: clojure">(defn prepare-request [request-method uri first-arg arg-map auth-map]
   &quot;Prepares the HTTP request&quot;
-  (let [real-uri (subs-uri uri arg-map)
+  (let [real-uri (format uri first-arg)
         body (:body arg-map) ;; get the post body
-        headers (:headers arg-map)
-        query-args (dissoc (merge arg-map auth-map) :body :headers)]
+        query-args (dissoc (merge arg-map auth-map) :body)]
     {:method request-method
      :url real-uri
      :query-params query-args
@@ -2653,20 +2674,22 @@ $(document).ready(function() {
 </td><td class="codes" /><pre class="brush: clojure">(defmacro def-wordnik-method
   &quot;Macro to create the Wordnik API calls&quot;
   [name request-method path &amp; rest]
-  (let [rest-map (apply sorted-map rest)]
-    `(defn ~name [&amp; {:as args#}]
-       (let [req-uri# (str &quot;http://&quot; *api-url* &quot;/&quot; *api-version*
-                           &quot;/&quot; ~path)
-             arg-map# (transform-args (merge ~rest-map args#))
-             auth-map# (merge (when *api-key*
-                                {:api_key *api-key*})
-                              (when *auth-token*
-                                {:auth_token *auth-token*}))
-             request# (prepare-request ~request-method
-                                       req-uri#
-                                       arg-map#
-                                       auth-map#)]
-         (execute-request request#)))))</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.util" name="wordnik.util"><h1 class="project-name">wordnik.util</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+  `(defn ~name [&amp; args#];;&amp; {:as args#}]
+     (let [req-uri# (str &quot;http://&quot; *api-url* &quot;/&quot; *api-version*
+                         &quot;/&quot; ~path)
+           split-args# (split-with (complement keyword?) args#)
+           first-arg# (ffirst split-args#)
+           arg-map# (transform-args (apply hash-map (second split-args#)))
+           auth-map# (merge (when *api-key*
+                              {:api_key *api-key*})
+                            (when *auth-token*
+                              {:auth_token *auth-token*}))
+           request# (prepare-request ~request-method
+                                     req-uri#
+                                     first-arg#
+                                     arg-map#
+                                     auth-map#)]
+         (execute-request request#))))</pre></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#wordnik.util" name="wordnik.util"><h1 class="project-name">wordnik.util</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes" /><pre class="brush: clojure">(ns wordnik.util
   (:use [clojure.set :only [rename-keys]])
   (:require [clojure.string :as str]))</pre></tr><tr><td class="docs">

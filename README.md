@@ -31,7 +31,7 @@ for calls that require it.
 in your project.clj
 
 ```
-[clj-wordnik "0.1.0-SNAPSHOT"]
+[clj-wordnik "0.1.0-alpha1"]
 ```
 
 ```clojure
