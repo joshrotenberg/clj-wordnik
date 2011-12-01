@@ -2648,8 +2648,9 @@ authenticate.</p>
   `(binding [*auth-token* ~token]
      (do  
        ~@body)))</pre></tr><tr><td class="docs">
-</td><td class="codes" /><pre class="brush: clojure">(defn execute-request [request]
+</td><td class="codes" /><pre class="brush: clojure">(defn execute-request 
   &quot;Executes the HTTP request and handles the response&quot;
+  [request]
   (let [response (cclient/request request)
         status (:status response)
         body (:body response)
@@ -2660,8 +2661,9 @@ authenticate.</p>
      :else
      (when-not (empty? body)
        (json/read-json (:body response))))))</pre></tr><tr><td class="docs">
-</td><td class="codes" /><pre class="brush: clojure">(defn prepare-request [request-method uri first-arg arg-map auth-map]
+</td><td class="codes" /><pre class="brush: clojure">(defn prepare-request 
   &quot;Prepares the HTTP request&quot;
+  [request-method uri first-arg arg-map auth-map]
   (let [real-uri (format uri first-arg)
         body (:body arg-map) ;; get the post body
         query-args (dissoc (merge arg-map auth-map) :body)]
