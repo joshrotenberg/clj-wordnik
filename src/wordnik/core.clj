@@ -31,8 +31,9 @@
      (do  
        ~@body)))
 
-(defn execute-request [request]
+(defn execute-request 
   "Executes the HTTP request and handles the response"
+  [request]
   (let [response (cclient/request request)
         status (:status response)
         body (:body response)
@@ -44,8 +45,9 @@
      (when-not (empty? body)
        (json/read-json (:body response))))))
 
-(defn prepare-request [request-method uri first-arg arg-map auth-map]
+(defn prepare-request 
   "Prepares the HTTP request"
+  [request-method uri first-arg arg-map auth-map]
   (let [real-uri (format uri first-arg)
         body (:body arg-map) ;; get the post body
         query-args (dissoc (merge arg-map auth-map) :body)]
