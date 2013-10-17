@@ -76,3 +76,7 @@ Lots of inspiration from [Adam Wynne/Stream Science](https://github.com/adamwynn
 Copyright (C) 2011 Josh Rotenberg
 
 Distributed under the Eclipse Public License, the same as Clojure.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/joshrotenberg/clj-wordnik/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
